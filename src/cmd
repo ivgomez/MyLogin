@@ -1,0 +1,15 @@
+npm install --save redux react-redux react-navigation react-navigation-header-buttons
+
+expo install react-native-gesture-handler react-native-reanimated
+
+npm install --save expo-font
+
+npm install --save @expo/vector-icons
+
+npm install --save moment
+
+npm install --save redux-thunk
+
+npm install --save expo-linear-gradient
+
+npm install --save react-navigation-stack
