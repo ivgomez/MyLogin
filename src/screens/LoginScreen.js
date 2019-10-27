@@ -1,50 +1,113 @@
-import React, { useState } from "react";
-import { View, Button, ScrollView, TextInput, Text, StyleSheet, KeyboardAvoidingView } from "react-native";
-import { connect } from "react-redux";
-//import { signup, login } from "";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Button,
+  ScrollView,
+  TextInput,
+  Text,
+  StyleSheet,
+  KeyboardAvoidingView,
+  ActivityIndicator,
+  Alert
+} from "react-native";
+import { connect, useDispatch } from "react-redux";
+import { login, signup } from "../actions/index";
+import { Formik } from "formik";
+import { string, object } from "yup";
 
 const LoginScreen = props => {
   const { dispatch } = props;
-  const [isLoading, setIsLoading] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
+  const dispatcher = useDispatch();
 
+  useEffect(() => {
+    if (error) {
+      Alert.alert("An Error Occurred!", error, [{ text: "Okay" }]);
+    }
+  }, [error]);
+
+  const validationSchema = object().shape({
+    email: string().required("* email is required"),
+    password: string().required("* password is required")
+  });
+
+  const authHandler = async values => {
+    let action;
+    if (isSignup) {
+      action = signup(values.email, values.password);
+    } else {
+      action = login(values.email, values.password);
+    }
+    setError(null);
+    setIsLoading(true);
+    try {
+      await dispatch(action);
+      props.navigation.navigate("Startup");
+    } catch (err) {
+      setError(err.message);
+      setIsLoading(false);
+    }
+  };
   return (
-    <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={50} style={styles.screen}>
-      <ScrollView>
-        <Text>Email</Text>
-        <TextInput
-          id="email"
-          label="E-Mail"
-          keyboardType="email-address"
-          required
-          email
-          autoCapitalize="none"
-          errorText="Please enter a valid email address."
-          initialValue=""
-        />
-        <Text>Password</Text>
-        <TextInput
-          id="password"
-          label="Password"
-          keyboardType="default"
-          secureTextEntry
-          required
-          minLength={5}
-          autoCapitalize="none"
-          errorText="Please enter a valid password."
-          initialValue=""
-        />
+    <Formik
+      initialValues={{
+        email: "",
+        password: ""
+      }}
+      validationSchema={validationSchema}
+      onSubmit={values => {
+        authHandler(values);
+      }}
+    >
+      {({ handleChange, errors, handleBlur, handleSubmit, values }) => (
+        <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={50} style={styles.screen}>
+          <ScrollView>
+            <View style={styles.authContainer}>
+              <Text>Email</Text>
+              <TextInput
+                id="email"
+                value={values.email}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                onChangeText={handleChange("email")}
+                onBlur={handleBlur("email")}
+              />
+              <Text>{errors.email}</Text>
+              <Text>Password</Text>
+              <TextInput
+                id="password"
+                value={values.password}
+                keyboardType="default"
+                secureTextEntry
+                minLength={5}
+                autoCapitalize="none"
+                onChangeText={handleChange("password")}
+                onBlur={handleBlur("password")}
+              />
+              <Text>{errors.password}</Text>
+            </View>
 
-        <View style={styles.buttonContainer}>
-          <Button
-            title={`Switch to ${isSignup ? "Login" : "Sign Up"}`}
-            onPress={() => {
-              setIsSignup(prevState => !prevState);
-            }}
-          />
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+            <View style={styles.buttonContainer}>
+              {isLoading ? (
+                <ActivityIndicator size="small" color="blue" />
+              ) : (
+                <Button title={isSignup ? "Sign Up" : "Login"} onPress={handleSubmit} />
+              )}
+            </View>
+            <View style={styles.buttonContainer}>
+              <Button
+                title={`Switch to ${isSignup ? "Login" : "Sign Up"}`}
+                onPress={() => {
+                  setIsSignup(prevState => !prevState);
+                }}
+              />
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      )}
+    </Formik>
   );
 };
 

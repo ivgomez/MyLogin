@@ -29,7 +29,6 @@ export const signup = (email, password) => {
     );
 
     if (!response.ok) {
-      console.log(response);
       const errorResData = await response.json();
       const errorId = errorResData.error.message;
       let message = "Something went wrong!";
@@ -40,9 +39,8 @@ export const signup = (email, password) => {
     }
 
     const resData = await response.json();
-    console.log(resData);
-    dispatch(authenticate(resData.localId, resData.idToken, parseInt(resData.expiresIn) * 1000));
-    const expirationDate = new Date(new Date().getTime() + parseInt(resData.expiresIn) * 1000);
+    dispatch(authenticate(resData.localId, resData.idToken, parseInt(resData.expiresIn) * 100));
+    const expirationDate = new Date(new Date().getTime() + parseInt(resData.expiresIn) * 100);
     saveDataToStorage(resData.idToken, resData.localId, expirationDate);
   };
 };
@@ -50,7 +48,7 @@ export const signup = (email, password) => {
 export const login = (email, password) => {
   return async dispatch => {
     const response = await fetch(
-      "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBq-RbJaQAr2HMnW5gcFRSdjO7sFNO83yM",
+      "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBq-RbJaQAr2HMnW5gcFRSdjO7sFNO83yM",
       {
         method: "POST",
         headers: {
@@ -65,7 +63,6 @@ export const login = (email, password) => {
     );
 
     if (!response.ok) {
-      console.log("from login", response);
       const errorResData = await response.json();
       const errorId = errorResData.error.message;
       let message = "Something went wrong!";
@@ -78,10 +75,10 @@ export const login = (email, password) => {
     }
 
     const resData = await response.json();
-    console.log(resData);
-    dispatch(authenticate(resData.localId, resData.idToken, parseInt(resData.expiresIn) * 1000));
-    const expirationDate = new Date(new Date().getTime() + parseInt(resData.expiresIn) * 1000);
+    dispatch(authenticate(resData.localId, resData.idToken, parseInt(resData.expiresIn) * 100));
+    const expirationDate = new Date(new Date().getTime() + parseInt(resData.expiresIn) * 100);
     saveDataToStorage(resData.idToken, resData.localId, expirationDate);
+    console.log("expirationDate ", expirationDate);
   };
 };
 
