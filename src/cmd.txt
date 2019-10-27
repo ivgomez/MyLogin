@@ -17,3 +17,5 @@ npm install --save react-navigation-stack
 npm install -S yup
 
 npm install formik --save
+
+https://firebase.google.com/docs/reference/rest/auth
