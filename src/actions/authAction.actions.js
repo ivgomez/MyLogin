@@ -7,7 +7,7 @@ let timer;
 export const authenticate = (userId, token, expiryTime) => {
   return dispatch => {
     dispatch(setLogoutTimer(expiryTime));
-    dispatch({ type: AUTHENTICATE, userId: userId, token: token });
+    dispatch({ type: AUTHENTICATE, userId: userId, token: token, expiryTime: expiryTime });
   };
 };
 
@@ -75,10 +75,10 @@ export const login = (email, password) => {
     }
 
     const resData = await response.json();
-    dispatch(authenticate(resData.localId, resData.idToken, parseInt(resData.expiresIn) * 100));
     const expirationDate = new Date(new Date().getTime() + parseInt(resData.expiresIn) * 100);
+    dispatch(authenticate(resData.localId, resData.idToken, parseInt(resData.expiresIn) * 100));
     saveDataToStorage(resData.idToken, resData.localId, expirationDate);
-    console.log("expirationDate ", expirationDate);
+    console.log("expirationDate token ", expirationDate);
   };
 };
 

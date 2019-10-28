@@ -10,17 +10,16 @@ import {
   ActivityIndicator,
   Alert
 } from "react-native";
-import { connect, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { login, signup } from "../actions/index";
 import { Formik } from "formik";
 import { string, object } from "yup";
 
 const LoginScreen = props => {
-  const { dispatch } = props;
   const [isSignup, setIsSignup] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();
-  const dispatcher = useDispatch();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (error) {
@@ -44,7 +43,7 @@ const LoginScreen = props => {
     setIsLoading(true);
     try {
       await dispatch(action);
-      props.navigation.navigate("Startup");
+      props.navigation.navigate("Main");
     } catch (err) {
       setError(err.message);
       setIsLoading(false);
@@ -131,10 +130,4 @@ const styles = StyleSheet.create({
   }
 });
 
-function mapDispatchToProps(dispatch) {
-  return {
-    dispatch
-  };
-}
-
-export default connect(mapDispatchToProps)(LoginScreen);
+export default LoginScreen;

@@ -2,7 +2,8 @@ import { AUTHENTICATE, LOGOUT } from "../actions/authAction.actions";
 
 const initialState = {
   token: null,
-  userId: null
+  userId: null,
+  expiryTime: null
 };
 
 export default (state = initialState, action) => {
@@ -10,7 +11,8 @@ export default (state = initialState, action) => {
     case AUTHENTICATE:
       return {
         token: action.token,
-        userId: action.userId
+        userId: action.userId,
+        expiryTime: action.expiryTime
       };
     case LOGOUT:
       return initialState;
